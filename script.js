@@ -1,8 +1,8 @@
 /* ==========================================
-   INISIALISASI SUPABASE (Cukup 1 kali di sini)
+   INISIALISASI SUPABASE (Gunakan kunci Legacy eyJ...)
    ========================================== */
 const SUPABASE_URL = 'https://yepqqfsftqjskefcgnoz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllcHFxZnNmdHFqc2tlZmNnbm96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTgyNzEsImV4cCI6MjEwNDA5NDI3MX0.obj0Zm-S6115MfLNQyRzjdoxjUqNQ8XVK4aL0kXzWYM';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllcHFxZnNmdHFqc2tlZmNnbm96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMzg2ODksImV4cCI6MjA1NjgxNDY4OX0.ISI_KUNCI_ANDA_YANG_PANJANG'; 
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -10,11 +10,16 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
    NAVIGASI HALAMAN (SPA)
    ========================================== */
 function showPage(pageId) {
+    let targetId = pageId;
+    if (!targetId.endsWith('-page')) {
+        targetId = pageId + '-page';
+    }
+    
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
     });
     
-    const targetPage = document.getElementById(pageId);
+    const targetPage = document.getElementById(targetId);
     if (targetPage) {
         targetPage.classList.add('active');
         window.scrollTo(0, 0);
@@ -25,10 +30,9 @@ function showPage(pageId) {
    MEMUAT DAFTAR NOVEL DARI DATABASE
    ========================================== */
 async function loadNovels() {
-    const grid = document.getElementById('novelGrid');
+    const grid = document.getElementById('novel-grid');
     if (!grid) return;
 
-    // Tampilkan status loading
     grid.innerHTML = `
         <div class="loading-state">
             <i class="fa-solid fa-spinner fa-spin"></i>
@@ -53,7 +57,6 @@ async function loadNovels() {
             return;
         }
 
-        // Render daftar novel ke dalam grid
         grid.innerHTML = data.map(novel => `
             <div class="novel-card" onclick="openNovel('${novel.id}')">
                 <div class="cover" style="background-color: ${novel.cover_color || '#FF5722'}">
@@ -71,7 +74,7 @@ async function loadNovels() {
         console.error('Gagal memuat novel:', err.message);
         grid.innerHTML = `
             <div class="loading-state">
-                <p style="color: #EF4444;">Gagal memuat data. Periksa koneksi atau pastikan tabel database sudah benar.</p>
+                <p style="color: #EF4444;">Gagal memuat data: ${escapeHtml(err.message)}</p>
             </div>
         `;
     }
@@ -81,16 +84,16 @@ async function loadNovels() {
    MEMBUKA HALAMAN BACA NOVEL
    ========================================== */
 async function openNovel(novelId) {
-    showPage('reader-page');
+    showPage('read-page');
     
-    const contentDiv = document.getElementById('chapterContent');
-    const titleDiv = document.getElementById('readerNovelTitle');
-    const chapterTitleDiv = document.getElementById('chapterTitle');
+    const contentDiv = document.getElementById('chapter-content');
+    const titleDiv = document.getElementById('read-title');
+    const genreDiv = document.getElementById('read-genre');
+    const chapterTitleDiv = document.getElementById('chapter-title');
 
     if (contentDiv) contentDiv.innerHTML = `<p style="text-align:center;">Memuat bab cerita...</p>`;
 
     try {
-        // Ambil data detail novel
         const { data: novel, error: novelError } = await supabase
             .from('novels')
             .select('*')
@@ -99,8 +102,8 @@ async function openNovel(novelId) {
 
         if (novelError) throw novelError;
         if (titleDiv) titleDiv.textContent = novel.title;
+        if (genreDiv) genreDiv.textContent = novel.genre;
 
-        // Ambil daftar bab berdasarkan novel_id
         const { data: chapters, error: chapError } = await supabase
             .from('chapters')
             .select('*')
@@ -111,17 +114,15 @@ async function openNovel(novelId) {
 
         if (!chapters || chapters.length === 0) {
             if (chapterTitleDiv) chapterTitleDiv.textContent = "Belum Ada Bab";
-            if (contentDiv) contentDiv.innerHTML = `<p style="text-align:center;">Novel ini belum memiliki bab cerita yang dipublikasikan.</p>`;
+            if (contentDiv) contentDiv.innerHTML = `<p style="text-align:center;">Novel ini belum memiliki bab cerita.</p>`;
             return;
         }
 
-        // Tampilkan bab pertama secara default
         const currentChapter = chapters[0];
         if (chapterTitleDiv) {
             chapterTitleDiv.textContent = `Bab ${currentChapter.chapter_number}: ${currentChapter.title}`;
         }
 
-        // Format paragraf agar rapi dibaca
         if (contentDiv) {
             const formattedParagraphs = currentChapter.content
                 .split('\n')
@@ -141,20 +142,78 @@ async function openNovel(novelId) {
 }
 
 /* ==========================================
-   PENGATURAN MODAL UNGGAH KARYA
+   PENGATURAN MODAL UNGGAH
    ========================================== */
 function openUploadModal() {
-    const modal = document.getElementById('uploadModal');
+    const modal = document.getElementById('upload-modal');
     if (modal) modal.style.display = 'flex';
 }
 
 function closeUploadModal() {
-    const modal = document.getElementById('uploadModal');
+    const modal = document.getElementById('upload-modal');
     if (modal) modal.style.display = 'none';
 }
 
 /* ==========================================
-   FUNGSI KEAMANAN KECIL (MENCEGAH XSS)
+   EVENT LISTENER UTAMA
+   ========================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    loadNovels();
+
+    // Tangani aksi submit form tulis karya
+    const uploadForm = document.getElementById('upload-form');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('title').value;
+            const genre = document.getElementById('genre').value;
+            const synopsis = document.getElementById('synopsis').value;
+            const chapterContent = document.getElementById('chapter1').value;
+            const submitBtn = document.getElementById('submit-btn');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Mempublikasikan...';
+
+            try {
+                // Simpan novel baru ke tabel novels
+                const { data: novelData, error: novelError } = await supabase
+                    .from('novels')
+                    .insert([{ title, genre, synopsis }])
+                    .select()
+                    .single();
+
+                if (novelError) throw novelError;
+
+                // Simpan bab 1 ke tabel chapters
+                const { error: chapError } = await supabase
+                    .from('chapters')
+                    .insert([{
+                        novel_id: novelData.id,
+                        chapter_number: 1,
+                        title: 'Bab 1',
+                        content: chapterContent
+                    }]);
+
+                if (chapError) throw chapError;
+
+                alert('Karya berhasil dipublikasikan!');
+                closeUploadModal();
+                uploadForm.reset();
+                loadNovels();
+
+            } catch (err) {
+                alert('Gagal mempublikasikan: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publikasikan Sekarang';
+            }
+        });
+    }
+});
+
+/* ==========================================
+   KEAMANAN HTML ESCAPE
    ========================================== */
 function escapeHtml(str) {
     if (!str) return '';
@@ -165,10 +224,3 @@ function escapeHtml(str) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-
-/* ==========================================
-   SAAT HALAMAN SELESAI DIMUAT
-   ========================================== */
-document.addEventListener('DOMContentLoaded', () => {
-    loadNovels();
-});
