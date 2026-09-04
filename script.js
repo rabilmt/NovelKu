@@ -2,7 +2,7 @@
    INISIALISASI SUPABASE (Cukup 1 kali di sini)
    ========================================== */
 const SUPABASE_URL = 'https://yepqqfsftqjskefcgnoz.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_A05hHba9yW_bOmcibQXpMw_Vob20V2S';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllcHFxZnNmdHFqc2tlZmNnbm96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTgyNzEsImV4cCI6MjEwNDA5NDI3MX0.obj0Zm-S6115MfLNQyRzjdoxjUqNQ8XVK4aL0kXzWYM';
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
