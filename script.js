@@ -1,19 +1,18 @@
+console.log("🚀 Script NovelKu berhasil dimuat!");
+
 /* ==========================================
-   INISIALISASI SUPABASE (Gunakan kunci Legacy eyJ...)
+   1. INISIALISASI SUPABASE
    ========================================== */
 const SUPABASE_URL = 'https://yepqqfsftqjskefcgnoz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllcHFxZnNmdHFqc2tlZmNnbm96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTgyNzEsImV4cCI6MjEwNDA5NDI3MX0.obj0Zm-S6115MfLNQyRzjdoxjUqNQ8XVK4aL0kXzWYM'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllcHFxZnNmdHFqc2tlZmNnbm96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTgyNzEsImV4cCI6MjEwNDA5NDI3MX0.obj0Zm-S6115MfLNQyRzjdoxjUqNQ8XVK4aL0kXzWYM';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ==========================================
-   NAVIGASI HALAMAN (SPA)
+   2. FUNGSI NAVIGASI HALAMAN
    ========================================== */
-function showPage(pageId) {
-    let targetId = pageId;
-    if (!targetId.endsWith('-page')) {
-        targetId = pageId + '-page';
-    }
+window.showPage = function(pageId) {
+    let targetId = pageId.endsWith('-page') ? pageId : pageId + '-page';
     
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
@@ -24,12 +23,12 @@ function showPage(pageId) {
         targetPage.classList.add('active');
         window.scrollTo(0, 0);
     }
-}
+};
 
 /* ==========================================
-   MEMUAT DAFTAR NOVEL DARI DATABASE
+   3. MEMUAT DAFTAR NOVEL DARI DATABASE
    ========================================== */
-async function loadNovels() {
+window.loadNovels = async function() {
     const grid = document.getElementById('novel-grid');
     if (!grid) return;
 
@@ -41,7 +40,7 @@ async function loadNovels() {
     `;
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('novels')
             .select('*')
             .order('created_at', { ascending: false });
@@ -71,19 +70,19 @@ async function loadNovels() {
         `).join('');
 
     } catch (err) {
-        console.error('Gagal memuat novel:', err.message);
+        console.error('Gagal memuat novel:', err);
         grid.innerHTML = `
             <div class="loading-state">
                 <p style="color: #EF4444;">Gagal memuat data: ${escapeHtml(err.message)}</p>
             </div>
         `;
     }
-}
+};
 
 /* ==========================================
-   MEMBUKA HALAMAN BACA NOVEL
+   4. MEMBUKA HALAMAN BACA NOVEL
    ========================================== */
-async function openNovel(novelId) {
+window.openNovel = async function(novelId) {
     showPage('read-page');
     
     const contentDiv = document.getElementById('chapter-content');
@@ -94,7 +93,7 @@ async function openNovel(novelId) {
     if (contentDiv) contentDiv.innerHTML = `<p style="text-align:center;">Memuat bab cerita...</p>`;
 
     try {
-        const { data: novel, error: novelError } = await supabase
+        const { data: novel, error: novelError } = await supabaseClient
             .from('novels')
             .select('*')
             .eq('id', novelId)
@@ -104,7 +103,7 @@ async function openNovel(novelId) {
         if (titleDiv) titleDiv.textContent = novel.title;
         if (genreDiv) genreDiv.textContent = novel.genre;
 
-        const { data: chapters, error: chapError } = await supabase
+        const { data: chapters, error: chapError } = await supabaseClient
             .from('chapters')
             .select('*')
             .eq('novel_id', novelId)
@@ -124,43 +123,40 @@ async function openNovel(novelId) {
         }
 
         if (contentDiv) {
-            const formattedParagraphs = currentChapter.content
+            contentDiv.innerHTML = currentChapter.content
                 .split('\n')
                 .filter(p => p.trim() !== '')
                 .map(p => `<p>${escapeHtml(p)}</p>`)
                 .join('');
-            
-            contentDiv.innerHTML = formattedParagraphs;
         }
 
     } catch (err) {
-        console.error('Gagal membuka novel:', err.message);
+        console.error('Gagal membuka bab:', err);
         if (contentDiv) {
-            contentDiv.innerHTML = `<p style="text-align:center; color: #EF4444;">Gagal memuat isi bab.</p>`;
+            contentDiv.innerHTML = `<p style="text-align:center; color: #EF4444;">Gagal memuat isi bab: ${escapeHtml(err.message)}</p>`;
         }
     }
-}
+};
 
 /* ==========================================
-   PENGATURAN MODAL UNGGAH
+   5. PENGATURAN MODAL UNGGAH
    ========================================== */
-function openUploadModal() {
+window.openUploadModal = function() {
     const modal = document.getElementById('upload-modal');
     if (modal) modal.style.display = 'flex';
-}
+};
 
-function closeUploadModal() {
+window.closeUploadModal = function() {
     const modal = document.getElementById('upload-modal');
     if (modal) modal.style.display = 'none';
-}
+};
 
 /* ==========================================
-   EVENT LISTENER UTAMA
+   6. EVENT LISTENER UTAMA
    ========================================== */
 document.addEventListener('DOMContentLoaded', () => {
     loadNovels();
 
-    // Tangani aksi submit form tulis karya
     const uploadForm = document.getElementById('upload-form');
     if (uploadForm) {
         uploadForm.addEventListener('submit', async (e) => {
@@ -176,8 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = 'Mempublikasikan...';
 
             try {
-                // Simpan novel baru ke tabel novels
-                const { data: novelData, error: novelError } = await supabase
+                const { data: novelData, error: novelError } = await supabaseClient
                     .from('novels')
                     .insert([{ title, genre, synopsis }])
                     .select()
@@ -185,8 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (novelError) throw novelError;
 
-                // Simpan bab 1 ke tabel chapters
-                const { error: chapError } = await supabase
+                const { error: chapError } = await supabaseClient
                     .from('chapters')
                     .insert([{
                         novel_id: novelData.id,
@@ -213,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================
-   KEAMANAN HTML ESCAPE
+   7. HELPER ESCAPE HTML
    ========================================== */
 function escapeHtml(str) {
     if (!str) return '';
