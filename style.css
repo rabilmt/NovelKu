@@ -1,0 +1,185 @@
+/* Variabel Warna Premium */
+:root {
+    --primary: #FF5722;
+    --primary-hover: #E64A19;
+    --bg-main: #F4F6F8;
+    --bg-paper: #FAF9F6;
+    --text-dark: #1E293B;
+    --text-muted: #64748B;
+    --white: #FFFFFF;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Navigasi Glassmorphism */
+.navbar {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    cursor: pointer;
+    color: var(--text-dark);
+}
+
+.logo span { color: var(--primary); }
+.logo i { color: var(--primary); margin-right: 5px; }
+
+/* Tombol */
+button { font-family: inherit; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+.nav-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; margin-right: 1.5rem; }
+.nav-btn:hover { color: var(--primary); }
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    padding: 0.7rem 1.5rem;
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+}
+.btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+.btn-outline {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    padding: 0.7rem 1.5rem;
+    border-radius: 50px;
+}
+.btn-outline:hover { background: var(--primary); color: var(--white); }
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.9rem; }
+.w-100 { width: 100%; padding: 1rem; font-size: 1rem; }
+
+/* Struktur Halaman */
+.page { display: none; animation: fadeIn 0.4s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1476275466078-4007374efac4?q=80&w=2000&auto=format&fit=crop') center/cover;
+    color: var(--white);
+    text-align: center;
+    padding: 100px 20px;
+    margin-bottom: 2rem;
+}
+.hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 15px; }
+.hero p { font-size: 1.1rem; color: #E2E8F0; max-width: 600px; margin: 0 auto; }
+
+/* Grid Novel */
+.novel-container { max-width: 1200px; margin: 0 auto; padding: 0 5% 4rem; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.section-header h2 { font-size: 1.5rem; font-weight: 700; }
+
+.novel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+}
+
+.novel-card {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+.novel-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); }
+
+.cover {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+}
+.cover-title { color: white; font-weight: 800; font-size: 1.3rem; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+
+.info { padding: 20px; }
+.badge { display: inline-block; background: #FFF0ED; color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; margin-bottom: 10px; }
+.info h3 { font-size: 1.1rem; margin-bottom: 8px; line-height: 1.4; color: var(--text-dark); }
+.synopsis-preview { font-size: 0.9rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; }
+
+/* Halaman Baca (Mode Kertas) */
+.reader-wrapper { max-width: 800px; margin: 2rem auto; padding: 0 20px; }
+.btn-back { background: none; border: none; color: var(--text-muted); font-size: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; }
+.btn-back:hover { color: var(--primary); }
+
+.reader-header { text-align: center; margin-bottom: 2rem; }
+.novel-title { font-size: 2rem; font-weight: 800; margin-top: 10px; color: var(--text-dark); }
+
+.reader-paper {
+    background: var(--bg-paper);
+    padding: 3rem 4rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #E2E8F0;
+}
+
+.chapter-title { text-align: center; font-size: 1.5rem; font-weight: 700; margin-bottom: 2.5rem; border-bottom: 2px solid #E2E8F0; padding-bottom: 1.5rem; }
+
+.chapter-content p {
+    font-family: 'Merriweather', serif; /* Font Serif sangat nyaman untuk membaca novel */
+    font-size: 1.15rem;
+    line-height: 2.2;
+    margin-bottom: 1.8rem;
+    color: #334155;
+    text-align: justify;
+}
+
+.reader-controls { display: flex; justify-content: space-between; margin-top: 2rem; padding-bottom: 4rem; }
+
+/* Modal Form */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+.modal-content { background: var(--white); padding: 30px; border-radius: 20px; width: 90%; max-width: 550px; box-shadow: var(--shadow-md); max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.close-btn { background: #F1F5F9; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.2rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+.close-btn:hover { background: #E2E8F0; color: var(--text-dark); }
+
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; color: var(--text-dark); }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 1rem; transition: border 0.3s; background: #F8FAFC; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); outline: none; background: var(--white); }
+
+.loading-state { text-align: center; color: var(--text-muted); padding: 3rem; grid-column: 1 / -1; }
+.loading-state i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+
+/* Responsif untuk HP */
+@media (max-width: 768px) {
+    .reader-paper { padding: 2rem 1.5rem; }
+    .hero h1 { font-size: 2rem; }
+}

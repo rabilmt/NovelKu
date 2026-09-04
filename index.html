@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovelKu | Platform Baca & Karya</title>
+    <!-- Font dan Ikon -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Navigasi -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="showPage('home')">
+                <i class="fa-solid fa-book-open-reader"></i> Novel<span>Ku</span>
+            </div>
+            <nav>
+                <button class="nav-btn" onclick="showPage('home')"><i class="fa-solid fa-house"></i> Beranda</button>
+                <button class="btn-primary" onclick="openUploadModal()"><i class="fa-solid fa-pen-nib"></i> Tulis Karya</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Halaman Beranda -->
+    <main id="home-page" class="page active">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Jelajahi Ribuan Dunia Baru</h1>
+                <p>Temukan cerita luar biasa atau mulai perjalanan karir menulismu di sini.</p>
+            </div>
+        </section>
+
+        <section class="novel-container">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-fire-flame-curved" style="color: #FF5722;"></i> Karya Terbaru</h2>
+                <button class="btn-outline btn-sm" onclick="loadNovels()"><i class="fa-solid fa-rotate-right"></i> Segarkan</button>
+            </div>
+            <div id="novel-grid" class="novel-grid">
+                <div class="loading-state">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Memuat karya terbaik untukmu...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Halaman Membaca -->
+    <main id="read-page" class="page">
+        <div class="reader-wrapper">
+            <button class="btn-back" onclick="showPage('home')"><i class="fa-solid fa-arrow-left-long"></i> Kembali ke Beranda</button>
+            
+            <div class="reader-header">
+                <span id="read-genre" class="badge">Genre</span>
+                <h1 id="read-title" class="novel-title">Judul Novel</h1>
+            </div>
+            
+            <div class="reader-paper">
+                <h2 id="chapter-title" class="chapter-title">Bab 1</h2>
+                <div id="chapter-content" class="chapter-content">
+                    <!-- Isi bab akan dimuat di sini -->
+                </div>
+            </div>
+
+            <div id="chapter-navigation" class="reader-controls"></div>
+        </div>
+    </main>
+
+    <!-- Modal Unggah -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-cloud-arrow-up"></i> Publikasikan Karyamu</h2>
+                <button class="close-btn" onclick="closeUploadModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="upload-form">
+                <div class="form-group">
+                    <label>Judul Novel</label>
+                    <input type="text" id="title" placeholder="Cth: Takdir Bintang Jatuh" required>
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select id="genre" required>
+                        <option value="" disabled selected>Pilih genre utama...</option>
+                        <option value="Romansa">Romansa</option>
+                        <option value="Fantasi">Fantasi</option>
+                        <option value="Misteri / Horor">Misteri / Horor</option>
+                        <option value="Aksi">Aksi</option>
+                        <option value="Fiksi Ilmiah">Fiksi Ilmiah</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sinopsis Ringkas</label>
+                    <textarea id="synopsis" rows="3" placeholder="Buat pembaca penasaran dengan ceritamu..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Isi Bab 1</label>
+                    <textarea id="chapter1" rows="6" placeholder="Ketikkan awal mula ceritamu di sini..." required></textarea>
+                </div>
+                <button type="submit" id="submit-btn" class="btn-primary w-100">Publikasikan Sekarang</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
